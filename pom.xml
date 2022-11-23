@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>de.akquinet.ccsp.monitoring.jdbc</groupId>
+    <artifactId>jdbc-monitoring-micrometer</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <name>JDBC monitoring with MicroMeter</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+
+        <kotlin.version>1.7.21</kotlin.version>
+        <junit.jupiter.version>5.7.1</junit.jupiter.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+			<dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-core</artifactId>
+                <version>${version.micrometer}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-jdk8</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${wildfly.plugin.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>3.12.4</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.20.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <version>${kotlin.version}</version>
+
+                    <configuration>
+                        <compilerPlugins>
+                            <plugin>no-arg</plugin>
+                            <plugin>all-open</plugin>
+                        </compilerPlugins>
+
+                        <jvmTarget>${maven.compiler.target}</jvmTarget>
+
+                        <pluginOptions>
+                            <option>all-open:annotation=javax.ejb.LocalBean</option>
+                            <option>all-open:annotation=javax.ejb.Stateless</option>
+                            <option>all-open:annotation=javax.interceptor.Interceptor</option>
+                            <option>all-open:annotation=javax.ejb.MessageDriven</option>
+                            <option>all-open:annotation=javax.ejb.Singleton</option>
+                            <option>all-open:annotation=javax.ejb.Startup</option>
+                            <option>all-open:annotation=javax.ws.rs.Path</option>
+                            <option>all-open:annotation=javax.ws.rs.ext.Provider</option>
+                            <option>all-open:annotation=javax.ws.rs.container.PreMatching</option>
+                            <option>all-open:annotation=javax.ws.rs.ApplicationPath</option>
+                            <option>all-open:annotation=javax.enterprise.context.ApplicationScoped</option>
+                            <option>all-open:annotation=javax.enterprise.context.RequestScoped</option>
+                            <option>all-open:annotation=javax.enterprise.context.SessionScoped</option>
+                            <option>all-open:annotation=javax.enterprise.inject.Default</option>
+                            <option>all-open:annotation=javax.enterprise.inject.Model</option>
+                            <option>all-open:annotation=javax.inject.Scope</option>
+                            <option>all-open:annotation=javax.inject.Singleton</option>
+                            <option>all-open:annotation=javax.inject.Named</option>
+                            <option>all-open:annotation=javax.inject.Qualifier</option>
+                            <option>all-open:annotation=javax.persistence.Entity</option>
+                            <option>all-open:annotation=javax.persistence.Embeddable</option>
+                        </pluginOptions>
+                    </configuration>
+
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-allopen</artifactId>
+                            <version>${kotlin.version}</version>
+                        </dependency>
+
+                        <dependency>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-noarg</artifactId>
+                            <version>${kotlin.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M7</version>
+
+                    <configuration>
+                        <excludes>
+                            <exclude>**/*IT.*</exclude>
+                        </excludes>
+
+                        <argLine>-Dfile.encoding=UTF-8</argLine>
+                    </configuration>
+
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.junit.jupiter</groupId>
+                            <artifactId>junit-jupiter-api</artifactId>
+                            <version>${junit.jupiter.version}</version>
+                        </dependency>
+
+                        <dependency>
+                            <groupId>org.junit.jupiter</groupId>
+                            <artifactId>junit-jupiter-engine</artifactId>
+                            <version>${junit.jupiter.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <groupId>org.jetbrains.kotlin</groupId>
+
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>test-compile</id>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <version>3.2.0</version>
+
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
