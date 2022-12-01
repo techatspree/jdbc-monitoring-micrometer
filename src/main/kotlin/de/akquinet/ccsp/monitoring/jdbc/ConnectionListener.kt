@@ -8,6 +8,6 @@ interface ConnectionListener {
      * Notify that a java.sql.Connection has been created/opened
      */
     @kotlin.jvm.Throws(SQLException::class)
-    fun onOpenConnection(connection: Connection) {
+    fun onOpenConnection(realConnection: Connection) {
     }
 }
