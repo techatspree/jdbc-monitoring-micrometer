@@ -14,8 +14,10 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
 
-        <kotlin.version>1.7.21</kotlin.version>
-        <junit.jupiter.version>5.7.1</junit.jupiter.version>
+        <version.micrometer>1.10.1</version.micrometer>
+        <kotlin.version>1.7.22</kotlin.version>
+        <junit.jupiter.version>5.9.0</junit.jupiter.version>
+        <version.hibernate>5.3.25.Final</version.hibernate>
     </properties>
 
     <dependencyManagement>
@@ -33,14 +35,25 @@
             </dependency>
 
             <dependency>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <version>${wildfly.plugin.version}</version>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${version.hibernate}</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -51,21 +64,20 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>3.12.4</version>
+            <version>4.8.0</version>
             <scope>test</scope>
         </dependency>
         
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.20.2</version>
+            <version>3.23.1</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
-            <version>${kotlin.version}</version>
         </dependency>
 
         <dependency>
@@ -86,53 +98,6 @@
                     <artifactId>kotlin-maven-plugin</artifactId>
                     <groupId>org.jetbrains.kotlin</groupId>
                     <version>${kotlin.version}</version>
-
-                    <configuration>
-                        <compilerPlugins>
-                            <plugin>no-arg</plugin>
-                            <plugin>all-open</plugin>
-                        </compilerPlugins>
-
-                        <jvmTarget>${maven.compiler.target}</jvmTarget>
-
-                        <pluginOptions>
-                            <option>all-open:annotation=javax.ejb.LocalBean</option>
-                            <option>all-open:annotation=javax.ejb.Stateless</option>
-                            <option>all-open:annotation=javax.interceptor.Interceptor</option>
-                            <option>all-open:annotation=javax.ejb.MessageDriven</option>
-                            <option>all-open:annotation=javax.ejb.Singleton</option>
-                            <option>all-open:annotation=javax.ejb.Startup</option>
-                            <option>all-open:annotation=javax.ws.rs.Path</option>
-                            <option>all-open:annotation=javax.ws.rs.ext.Provider</option>
-                            <option>all-open:annotation=javax.ws.rs.container.PreMatching</option>
-                            <option>all-open:annotation=javax.ws.rs.ApplicationPath</option>
-                            <option>all-open:annotation=javax.enterprise.context.ApplicationScoped</option>
-                            <option>all-open:annotation=javax.enterprise.context.RequestScoped</option>
-                            <option>all-open:annotation=javax.enterprise.context.SessionScoped</option>
-                            <option>all-open:annotation=javax.enterprise.inject.Default</option>
-                            <option>all-open:annotation=javax.enterprise.inject.Model</option>
-                            <option>all-open:annotation=javax.inject.Scope</option>
-                            <option>all-open:annotation=javax.inject.Singleton</option>
-                            <option>all-open:annotation=javax.inject.Named</option>
-                            <option>all-open:annotation=javax.inject.Qualifier</option>
-                            <option>all-open:annotation=javax.persistence.Entity</option>
-                            <option>all-open:annotation=javax.persistence.Embeddable</option>
-                        </pluginOptions>
-                    </configuration>
-
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.jetbrains.kotlin</groupId>
-                            <artifactId>kotlin-maven-allopen</artifactId>
-                            <version>${kotlin.version}</version>
-                        </dependency>
-
-                        <dependency>
-                            <groupId>org.jetbrains.kotlin</groupId>
-                            <artifactId>kotlin-maven-noarg</artifactId>
-                            <version>${kotlin.version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
 
                 <plugin>
@@ -169,6 +134,7 @@
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
+                <version>${kotlin.version}</version>
 
                 <executions>
                     <execution>
