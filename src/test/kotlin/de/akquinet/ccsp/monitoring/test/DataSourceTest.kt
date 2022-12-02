@@ -5,6 +5,7 @@ package de.akquinet.ccsp.monitoring.test
 import de.akquinet.ccsp.monitoring.JDBC_CONNECTIONS_ACTIVE
 import de.akquinet.ccsp.monitoring.JDBC_CONNECTIONS_CLOSED
 import de.akquinet.ccsp.monitoring.JDBC_CONNECTIONS_OPENED
+import de.akquinet.ccsp.monitoring.JDBC_PREPARED_STATEMENT_CALLS
 import de.akquinet.ccsp.monitoring.jdbc.JDBCDataSourceMetrics
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import org.assertj.core.api.Assertions.assertThat
@@ -30,6 +31,9 @@ class DataSourceTest {
 			it.prepareStatement("INSERT INTO COMPANY(ID, NAME) VALUES (1, 'akquinet')")
 			checkMeters(2.0,1.0, 1.0)
 		}
+
+		val counters = dataSourceMetrics.registry().get(JDBC_PREPARED_STATEMENT_CALLS).counters()
+		assertThat(counters.size).isEqualTo(1)
 
 		checkMeters(2.0,2.0, 0.0)
 	}
