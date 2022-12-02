@@ -7,10 +7,11 @@ import java.sql.SQLException
 /**
  * Use {@link org.hibernate.engine.jdbc.connections.spi.ConnectionProvider} to obtain connections
  */
-abstract class HibernateConnectionProviderMetrics(private val connectionProvider: ConnectionProvider) : AbstractJDBCMetrics(),
-    ConnectionProvider by connectionProvider {
+abstract class HibernateConnectionProviderMetrics(private val connectionProvider: ConnectionProvider) :
+	AbstractJDBCMetrics(),
+	ConnectionProvider by connectionProvider {
 
-    @kotlin.jvm.Throws(SQLException::class)
-    @Suppress("UsePropertyAccessSyntax")
-    final override fun getConnection() = handleConnection(connectionProvider.getConnection())
+	@kotlin.jvm.Throws(SQLException::class)
+	@Suppress("UsePropertyAccessSyntax")
+	final override fun getConnection() = handleConnection(connectionProvider.getConnection())
 }

@@ -9,11 +9,11 @@ import javax.sql.DataSource
  */
 @Suppress("unused")
 open class JDBCDataSourceMetrics(private val dataSource: DataSource) : AbstractJDBCMetrics(), DataSource by dataSource {
-    @Throws(SQLException::class)
-    final override fun getConnection(username: String, password: String) =
-        handleConnection(dataSource.getConnection(username, password))
+	@Throws(SQLException::class)
+	final override fun getConnection(username: String, password: String) =
+		handleConnection(dataSource.getConnection(username, password))
 
-    @Suppress("UsePropertyAccessSyntax")
-    @Throws(SQLException::class)
-    final override fun getConnection() = handleConnection(dataSource.getConnection())
+	@Suppress("UsePropertyAccessSyntax")
+	@Throws(SQLException::class)
+	final override fun getConnection() = handleConnection(dataSource.getConnection())
 }

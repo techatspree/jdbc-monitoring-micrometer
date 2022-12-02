@@ -9,7 +9,7 @@ import java.util.*
  */
 @Suppress("unused")
 open class ConnectionFactoryMetrics(private val connectionFactory: ConnectionFactory) : AbstractJDBCMetrics(),
-    ConnectionFactory by connectionFactory {
-    @Throws(SQLException::class)
-    final override fun openConnection() = handleConnection(connectionFactory.openConnection())
+	ConnectionFactory by connectionFactory {
+	@Throws(SQLException::class)
+	final override fun openConnection() = handleConnection(connectionFactory.openConnection())
 }

@@ -6,5 +6,5 @@ import java.sql.Connection
  * Custom connection factory
  */
 interface ConnectionFactory {
-    fun openConnection() : Connection
+	fun openConnection(): Connection
 }

@@ -10,7 +10,7 @@ import java.util.*
  */
 @Suppress("unused")
 open class JDBCDriverMetrics(private val driver: Driver) : AbstractJDBCMetrics(), Driver by driver {
-    @Throws(SQLException::class)
-    @Suppress("UsePropertyAccessSyntax")
-    final override fun connect(url: String, info: Properties) = handleConnection(driver.connect(url, info))
+	@Throws(SQLException::class)
+	@Suppress("UsePropertyAccessSyntax")
+	final override fun connect(url: String, info: Properties) = handleConnection(driver.connect(url, info))
 }
