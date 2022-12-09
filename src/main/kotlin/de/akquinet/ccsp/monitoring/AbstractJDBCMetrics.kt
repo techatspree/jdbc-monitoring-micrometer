@@ -50,13 +50,15 @@ abstract class AbstractJDBCMetrics : MeterBinder, JDBCMetrics {
 
 	override fun gauge(name: String, tags: Tags): Gauge = meterRegistry.get(name).tags(tags).gauge()
 
+	override fun timer(name: String, tags: Tags): Timer = meterRegistry.get(name).tags(tags).timer()
+
 	override fun gaugeCounter(name: String): AtomicInteger = gaugeCounters[name]!!
 
 	override fun registerTimer(name: String, tags: Tags): Timer =
 		Timer.builder(name).tags(tags).description(name).register(meterRegistry)
 
-	override fun incrementCallCounter(name: String, tags: Tags): Counter =
-		Counter.builder(name).baseUnit("calls").description(name).register(meterRegistry)
+	override fun registerCallCounter(name: String, tags: Tags): Counter =
+		Counter.builder(name).tags(tags).baseUnit("calls").description(name).register(meterRegistry)
 
 	/**
 	 *  Override this method if you want to be informed whenever a connection is created.

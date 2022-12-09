@@ -8,10 +8,11 @@ import java.sql.SQLException
  * Use {@link org.hibernate.engine.jdbc.connections.spi.ConnectionProvider} to obtain connections
  */
 abstract class HibernateConnectionProviderMetrics(private val connectionProvider: ConnectionProvider) :
-	AbstractJDBCMetrics(),
-	ConnectionProvider by connectionProvider {
-
+	AbstractJDBCMetrics(), ConnectionProvider by connectionProvider {
 	@kotlin.jvm.Throws(SQLException::class)
 	@Suppress("UsePropertyAccessSyntax")
 	final override fun getConnection() = handleConnection(connectionProvider.getConnection())
+
+	@Suppress("UNCHECKED_CAST")
+	fun <P : ConnectionProvider> provider(): P = connectionProvider as P
 }

@@ -8,11 +8,13 @@ interface JDBCMetrics {
 
 	fun gauge(name: String, tags: Tags = Tags.empty()): Gauge
 
+	fun timer(name: String, tags: Tags): Timer
+
 	fun gaugeCounter(name: String): AtomicInteger
 
 	fun registerTimer(name: String, tags: Tags): Timer
 
-	fun incrementCallCounter(name: String, tags: Tags): Counter
+	fun registerCallCounter(name: String, tags: Tags): Counter
 
 	fun registry(): MeterRegistry
 }
