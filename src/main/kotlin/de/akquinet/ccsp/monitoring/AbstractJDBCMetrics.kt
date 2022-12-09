@@ -12,17 +12,11 @@ abstract class AbstractJDBCMetrics : MeterBinder, JDBCMetrics {
 	private val gaugeCounters = HashMap<String, AtomicInteger>()
 	private lateinit var meterRegistry: MeterRegistry
 
-	@Suppress("MemberVisibilityCanBePrivate")
 	var enabled: Boolean = true
 
 	@kotlin.jvm.Throws(SQLException::class)
 	fun handleConnection(connection: Connection): Connection {
 		onOpenConnection(connection)
-
-		if (enabled) {
-			counter(JDBC_CONNECTIONS_OPENED).increment()
-			gaugeCounter(JDBC_CONNECTIONS_ACTIVE).increment()
-		}
 
 		return JDBCConnection(this, connection)
 	}
@@ -30,18 +24,16 @@ abstract class AbstractJDBCMetrics : MeterBinder, JDBCMetrics {
 	override fun bindTo(registry: MeterRegistry) {
 		meterRegistry = registry
 
-		Counter.builder(JDBC_CONNECTIONS_OPENED).baseUnit(CONNECTIONS).description("Number of opened connections")
-			.register(registry)
-		Counter.builder(JDBC_CONNECTIONS_CLOSED).baseUnit(CONNECTIONS).description("Number of closed connections")
-			.register(registry)
-		registerGauge(JDBC_CONNECTIONS_ACTIVE, CONNECTIONS, "Number of active connections")
+		registerCounter(JDBC_CONNECTIONS_OPENED, Tags.empty(), CONNECTIONS)
+		registerCounter(JDBC_CONNECTIONS_CLOSED, Tags.empty(), CONNECTIONS)
+		registerGauge(JDBC_CONNECTIONS_ACTIVE, CONNECTIONS)
 	}
 
 	@Suppress("MoveLambdaOutsideParentheses", "SameParameterValue")
-	private fun registerGauge(name: String, unit: String, desc: String) {
+	private fun registerGauge(name: String, unit: String) {
 		gaugeCounters[name] = AtomicInteger(0)
 
-		Gauge.builder(name, { gaugeCounter(name) }).baseUnit(unit).description(desc).register(meterRegistry)
+		Gauge.builder(name, { gaugeCounter(name) }).baseUnit(unit).description(name).register(meterRegistry)
 	}
 
 	override fun registry() = meterRegistry
@@ -57,8 +49,8 @@ abstract class AbstractJDBCMetrics : MeterBinder, JDBCMetrics {
 	override fun registerTimer(name: String, tags: Tags): Timer =
 		Timer.builder(name).tags(tags).description(name).register(meterRegistry)
 
-	override fun registerCallCounter(name: String, tags: Tags): Counter =
-		Counter.builder(name).tags(tags).baseUnit("calls").description(name).register(meterRegistry)
+	override fun registerCounter(name: String, tags: Tags, baseUnit: String): Counter =
+		Counter.builder(name).tags(tags).baseUnit(baseUnit).description(name).register(meterRegistry)
 
 	/**
 	 *  Override this method if you want to be informed whenever a connection is created.

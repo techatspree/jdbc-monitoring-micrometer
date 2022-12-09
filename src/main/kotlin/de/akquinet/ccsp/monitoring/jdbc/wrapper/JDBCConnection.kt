@@ -1,18 +1,21 @@
 package de.akquinet.ccsp.monitoring.jdbc.wrapper
 
-import de.akquinet.ccsp.monitoring.JDBCMetrics
-import de.akquinet.ccsp.monitoring.JDBC_CONNECTIONS_ACTIVE
-import de.akquinet.ccsp.monitoring.JDBC_CONNECTIONS_CLOSED
-import de.akquinet.ccsp.monitoring.decrement
+import de.akquinet.ccsp.monitoring.*
 import java.sql.Connection
 
 class JDBCConnection(
 	private val jdbcMetrics: JDBCMetrics,
 	private val connection: Connection
 ) : Connection by connection {
+	init {
+		jdbcMetrics.counter(JDBC_CONNECTIONS_OPENED).increment()
+		jdbcMetrics.gaugeCounter(JDBC_CONNECTIONS_ACTIVE).increment()
+	}
+
 	override fun close() {
 		jdbcMetrics.counter(JDBC_CONNECTIONS_CLOSED).increment()
 		jdbcMetrics.gaugeCounter(JDBC_CONNECTIONS_ACTIVE).decrement()
+
 		connection.close()
 	}
 

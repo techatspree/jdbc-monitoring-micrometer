@@ -34,15 +34,20 @@ class PreparedStatementCounterTest : AbstractJDBCTest() {
 		}
 
 		assertThat(searchCalls().counters().size).isEqualTo(2)
-		assertThat(searchCalls().tags(callTags(sqlCreate)).counter().count()).isEqualTo(1.0)
-		assertThat(searchCalls().tags(callTags(sqlInsert)).counter().count()).isEqualTo(2.0)
-		val timer = executionCalls().tags(executionTags(sqlInsert)).timer()
-		assertThat(timer.count()).isEqualTo(2)
-		assertThat(timer.totalTime(TimeUnit.MICROSECONDS)).isGreaterThan(0.0)
+		assertThat(searchCalls().tags(callTags(sqlCreate)).counter().count())
+			.`as`("Prepared statements for '$sqlCreate'").isEqualTo(1.0)
+		assertThat(searchCalls().tags(callTags(sqlInsert)).counter().count())
+			.`as`("Prepared statements for '$sqlInsert'").isEqualTo(2.0)
+
+		val timer = searchExecutions().tags(executionTags(sqlInsert)).timer()
+		assertThat(timer.count()).`as`("Number of records for '$sqlCreate'").isEqualTo(2)
+		assertThat(timer.totalTime(TimeUnit.MICROSECONDS)).`as`("Total time spent for '$sqlCreate'").isGreaterThan(0.0)
 	}
 
 	private fun callTags(sql: String) = Tags.of(TAG_PREPARED_STATEMENT_CREATION, sql)
+
+	@Suppress("SameParameterValue")
 	private fun executionTags(sql: String) = Tags.of(TAG_PREPARED_STATEMENT_EXECUTION, sql)
 	private fun searchCalls() = dataSourceMetrics.registry().get(JDBC_PREPARED_STATEMENT_CALLS)
-	private fun executionCalls() = dataSourceMetrics.registry().get(JDBC_PREPARED_STATEMENT_TIMER)
+	private fun searchExecutions() = dataSourceMetrics.registry().get(JDBC_PREPARED_STATEMENT_TIMER)
 }

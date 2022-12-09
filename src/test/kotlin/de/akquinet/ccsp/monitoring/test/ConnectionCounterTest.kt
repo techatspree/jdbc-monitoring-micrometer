@@ -37,8 +37,8 @@ class ConnectionCounterTest : AbstractJDBCTest() {
 	}
 
 	private fun checkMeters(opened: Double, closed: Double, active: Double) {
-		assertThat(dataSourceMetrics.counter(JDBC_CONNECTIONS_OPENED).count()).`as`("opened").isEqualTo(opened)
-		assertThat(dataSourceMetrics.counter(JDBC_CONNECTIONS_CLOSED).count()).`as`("closed").isEqualTo(closed)
-		assertThat(dataSourceMetrics.gauge(JDBC_CONNECTIONS_ACTIVE).value()).`as`("active").isEqualTo(active)
+		assertThat(dataSourceMetrics.counter(JDBC_CONNECTIONS_OPENED).count()).`as`(JDBC_CONNECTIONS_OPENED).isEqualTo(opened)
+		assertThat(dataSourceMetrics.counter(JDBC_CONNECTIONS_CLOSED).count()).`as`(JDBC_CONNECTIONS_CLOSED).isEqualTo(closed)
+		assertThat(dataSourceMetrics.gauge(JDBC_CONNECTIONS_ACTIVE).value()).`as`(JDBC_CONNECTIONS_ACTIVE).isEqualTo(active)
 	}
 }

@@ -14,7 +14,7 @@ interface JDBCMetrics {
 
 	fun registerTimer(name: String, tags: Tags): Timer
 
-	fun registerCallCounter(name: String, tags: Tags): Counter
+	fun registerCounter(name: String, tags: Tags, baseUnit: String): Counter
 
 	fun registry(): MeterRegistry
 }
