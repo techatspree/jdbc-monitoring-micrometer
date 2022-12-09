@@ -23,7 +23,10 @@ class ConnectionCounterTest : AbstractJDBCTest() {
 		}
 
 		dataSourceMetrics.connection.use {
-			it.prepareStatement("INSERT INTO COMPANY(ID, NAME) VALUES (1, 'akquinet')").executeUpdate()
+			it.prepareStatement("INSERT INTO COMPANY(ID, NAME) VALUES (?, ?)").apply {
+				setInt(1, 1)
+				setString(2, "akquinet")
+			}.executeUpdate()
 			checkMeters(2.0, 1.0, 1.0)
 		}
 

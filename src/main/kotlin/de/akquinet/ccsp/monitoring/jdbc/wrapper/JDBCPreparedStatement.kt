@@ -11,17 +11,17 @@ class JDBCPreparedStatement(
 	sql: String,
 	private val preparedStatement: PreparedStatement
 ) : PreparedStatement by preparedStatement {
-	private val executeTags = Tags.of(TAG_PREPARED_STATEMENT_EXECUTION, sql)
+	private val executionTags = Tags.of(TAG_PREPARED_STATEMENT_EXECUTION, sql)
+	private val creationTags = Tags.of(TAG_PREPARED_STATEMENT_CREATION, sql)
 
 	init {
-		jdbcMetrics.registerTimer(JDBC_PREPARED_STATEMENT_TIMER, executeTags)
-		jdbcMetrics.registerCallCounter(JDBC_PREPARED_STATEMENT_CALLS, Tags.of(TAG_PREPARED_STATEMENT_CREATION, sql))
-			.increment()
+		jdbcMetrics.registerTimer(JDBC_PREPARED_STATEMENT_TIMER, executionTags)
+		jdbcMetrics.registerCallCounter(JDBC_PREPARED_STATEMENT_CALLS, creationTags).increment()
 	}
 
-	override fun execute() = jdbcMetrics.timer(JDBC_PREPARED_STATEMENT_TIMER, executeTags)
+	override fun execute() = jdbcMetrics.timer(JDBC_PREPARED_STATEMENT_TIMER, executionTags)
 		.record(BooleanSupplier { preparedStatement.execute() })
 
-	override fun executeUpdate() = jdbcMetrics.timer(JDBC_PREPARED_STATEMENT_TIMER, executeTags)
+	override fun executeUpdate() = jdbcMetrics.timer(JDBC_PREPARED_STATEMENT_TIMER, executionTags)
 		.record(IntSupplier { preparedStatement.executeUpdate() })
 }
