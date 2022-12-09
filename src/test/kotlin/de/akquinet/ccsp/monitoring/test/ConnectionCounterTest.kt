@@ -5,7 +5,7 @@ package de.akquinet.ccsp.monitoring.test
 import de.akquinet.ccsp.monitoring.JDBC_CONNECTIONS_ACTIVE
 import de.akquinet.ccsp.monitoring.JDBC_CONNECTIONS_CLOSED
 import de.akquinet.ccsp.monitoring.JDBC_CONNECTIONS_OPENED
-import de.akquinet.ccsp.monitoring.JDBC_PREPARED_STATEMENT_CALLS
+import de.akquinet.ccsp.monitoring.JDBC_PREPARED_STATEMENTS
 import de.akquinet.ccsp.monitoring.jdbc.JDBCDataSourceMetrics
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -18,19 +18,19 @@ class ConnectionCounterTest : AbstractJDBCTest() {
 		checkMeters(0.0, 0.0, 0.0)
 
 		dataSourceMetrics.connection.use {
-			it.createStatement().execute("CREATE TABLE COMPANY(ID INT PRIMARY KEY, NAME VARCHAR(100) )")
+			it.createStatement().execute(SQL_CREATE)
 			checkMeters(1.0, 0.0, 1.0)
 		}
 
 		dataSourceMetrics.connection.use {
-			it.prepareStatement("INSERT INTO COMPANY(ID, NAME) VALUES (?, ?)").apply {
+			it.prepareStatement(SQL_INSERT).apply {
 				setInt(1, 1)
 				setString(2, "akquinet")
 			}.executeUpdate()
 			checkMeters(2.0, 1.0, 1.0)
 		}
 
-		val counters = dataSourceMetrics.registry().get(JDBC_PREPARED_STATEMENT_CALLS).counters()
+		val counters = dataSourceMetrics.registry().get(JDBC_PREPARED_STATEMENTS).counters()
 		assertThat(counters.size).isEqualTo(1)
 
 		checkMeters(2.0, 2.0, 0.0)

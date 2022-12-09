@@ -2,7 +2,7 @@
 
 package de.akquinet.ccsp.monitoring.test
 
-import de.akquinet.ccsp.monitoring.JDBC_PREPARED_STATEMENT_CALLS
+import de.akquinet.ccsp.monitoring.JDBC_PREPARED_STATEMENTS
 import de.akquinet.ccsp.monitoring.JDBC_PREPARED_STATEMENT_TIMER
 import de.akquinet.ccsp.monitoring.TAG_PREPARED_STATEMENT_CREATION
 import de.akquinet.ccsp.monitoring.TAG_PREPARED_STATEMENT_EXECUTION
@@ -23,31 +23,29 @@ class PreparedStatementCounterTest : AbstractJDBCTest() {
 	}
 
 	@Test
-	fun `Count statements and executions`() {
-		val sqlCreate = "CREATE TABLE COMPANY(ID INT PRIMARY KEY, NAME VARCHAR(100))"
-		val sqlInsert = "INSERT INTO COMPANY(ID, NAME) VALUES (?, ?)"
-
+	fun `Count prepared statements and executions`() {
 		dataSourceMetrics.connection.use {
-			it.prepareStatement(sqlCreate).execute()
-			it.prepareStatement(sqlInsert).apply { setInt(1, 1); setString(2, "akquinet") }.executeUpdate()
-			it.prepareStatement(sqlInsert).apply { setInt(1, 2); setString(2, "IBM") }.executeUpdate()
+			it.prepareStatement(SQL_CREATE).execute()
+			it.prepareStatement(SQL_INSERT).apply { setInt(1, 1); setString(2, "akquinet") }.executeUpdate()
+			it.prepareStatement(SQL_INSERT).apply { setInt(1, 2); setString(2, "IBM") }.executeUpdate()
 		}
 
-		assertThat(searchCalls().counters().size).isEqualTo(2)
-		assertThat(searchCalls().tags(callTags(sqlCreate)).counter().count())
-			.`as`("Prepared statements for '$sqlCreate'").isEqualTo(1.0)
-		assertThat(searchCalls().tags(callTags(sqlInsert)).counter().count())
-			.`as`("Prepared statements for '$sqlInsert'").isEqualTo(2.0)
+		assertThat(searchStatementCreations().counters().size).isEqualTo(2)
+		assertThat(searchStatementCreations().tags(callTags(SQL_CREATE)).counter().count())
+			.`as`("Prepared statements for '$SQL_CREATE'").isEqualTo(1.0)
+		assertThat(searchStatementCreations().tags(callTags(SQL_INSERT)).counter().count())
+			.`as`("Prepared statements for '$SQL_INSERT'").isEqualTo(2.0)
 
-		val timer = searchExecutions().tags(executionTags(sqlInsert)).timer()
-		assertThat(timer.count()).`as`("Number of records for '$sqlCreate'").isEqualTo(2)
-		assertThat(timer.totalTime(TimeUnit.MICROSECONDS)).`as`("Total time spent for '$sqlCreate'").isGreaterThan(0.0)
+		val timer = searchStatementExecutions().tags(executionTags(SQL_INSERT)).timer()
+
+		assertThat(timer.count()).`as`("Number of records for '$SQL_CREATE'").isEqualTo(2)
+		assertThat(timer.totalTime(TimeUnit.MICROSECONDS)).`as`("Total time spent for '$SQL_CREATE'").isGreaterThan(0.0)
 	}
 
 	private fun callTags(sql: String) = Tags.of(TAG_PREPARED_STATEMENT_CREATION, sql)
 
 	@Suppress("SameParameterValue")
 	private fun executionTags(sql: String) = Tags.of(TAG_PREPARED_STATEMENT_EXECUTION, sql)
-	private fun searchCalls() = dataSourceMetrics.registry().get(JDBC_PREPARED_STATEMENT_CALLS)
-	private fun searchExecutions() = dataSourceMetrics.registry().get(JDBC_PREPARED_STATEMENT_TIMER)
+	private fun searchStatementCreations() = dataSourceMetrics.registry().get(JDBC_PREPARED_STATEMENTS)
+	private fun searchStatementExecutions() = dataSourceMetrics.registry().get(JDBC_PREPARED_STATEMENT_TIMER)
 }

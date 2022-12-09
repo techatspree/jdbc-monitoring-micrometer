@@ -19,6 +19,14 @@ class JDBCConnection(
 		connection.close()
 	}
 
+	override fun createStatement() = JDBCStatement(jdbcMetrics, connection.createStatement())
+
+	override fun createStatement(resultSetType: Int, resultSetConcurrency: Int) =
+		JDBCStatement(jdbcMetrics, connection.createStatement(resultSetType, resultSetConcurrency))
+
+	override fun createStatement(resultSetType: Int, resultSetConcurrency: Int, resultSetHoldability: Int) =
+		JDBCStatement(jdbcMetrics, connection.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability))
+
 	override fun prepareStatement(sql: String) =
 		JDBCPreparedStatement(jdbcMetrics, sql, connection.prepareStatement(sql))
 

@@ -17,10 +17,10 @@ class JDBCPreparedStatement(
 	private val executionTags = Tags.of(TAG_PREPARED_STATEMENT_EXECUTION, sql)
 	private val creationTags = Tags.of(TAG_PREPARED_STATEMENT_CREATION, sql)
 	private val timer = jdbcMetrics.registerTimer(JDBC_PREPARED_STATEMENT_TIMER, executionTags)
-	private val callCounter = jdbcMetrics.registerCounter(JDBC_PREPARED_STATEMENT_CALLS, creationTags, "calls")
+	private val instanceCounter = jdbcMetrics.registerCounter(JDBC_PREPARED_STATEMENTS, creationTags, "instances")
 
 	init {
-		callCounter.increment()
+		instanceCounter.increment()
 	}
 
 	override fun execute() = timer.record(BooleanSupplier { preparedStatement.execute() })
@@ -57,7 +57,7 @@ class JDBCPreparedStatement(
 
 	override fun executeLargeBatch() = timer.record(Supplier { preparedStatement.executeLargeBatch() })!!
 
-	override fun executeLargeUpdate() = timer.record(LongSupplier { preparedStatement.executeLargeUpdate() })!!
+	override fun executeLargeUpdate() = timer.record(LongSupplier { preparedStatement.executeLargeUpdate() })
 
 	override fun executeLargeUpdate(sql: String) =
 		timer.record(LongSupplier { preparedStatement.executeLargeUpdate(sql) })
