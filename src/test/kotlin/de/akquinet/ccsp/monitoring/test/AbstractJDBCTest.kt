@@ -8,6 +8,8 @@ import org.junit.jupiter.api.AfterEach
 
 const val SQL_CREATE = "CREATE TABLE COMPANY(ID INT PRIMARY KEY, NAME VARCHAR(100))"
 const val SQL_INSERT = "INSERT INTO COMPANY(ID, NAME) VALUES (?, ?)"
+const val SQL_DELETE = "DELETE FROM COMPANY WHERE ID = 1"
+
 const val JDBC_URL = "jdbc:hsqldb:mem:test"
 
 private const val SHUTDOWN = "SHUTDOWN"

@@ -10,7 +10,7 @@ import de.akquinet.ccsp.monitoring.jdbc.JDBCDataSourceMetrics
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class ConnectionCounterTest : AbstractJDBCTest() {
+class ConnectionMetricsTest : AbstractJDBCTest() {
 	private val dataSourceMetrics = JDBCDataSourceMetrics(dataSource).apply { bindTo(registry) }
 
 	@Test

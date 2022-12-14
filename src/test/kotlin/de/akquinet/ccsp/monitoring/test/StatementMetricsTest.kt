@@ -13,7 +13,7 @@ import org.hsqldb.jdbc.JDBCDriver
 import org.junit.jupiter.api.Test
 import java.util.concurrent.TimeUnit
 
-class StatementCounterTest : AbstractJDBCTest() {
+class StatementMetricsTest : AbstractJDBCTest() {
 	private val driverMetrics = HibernateDriverMetrics().apply {
 		val provider = provider<DriverManagerConnectionProviderImpl>()
 		provider.configure(mapOf(DRIVER to JDBCDriver::class.java.name, URL to JDBC_URL))
@@ -24,27 +24,26 @@ class StatementCounterTest : AbstractJDBCTest() {
 	fun `Count statements and executions`() {
 		val sqlInsert1 = SQL_INSERT.replaceFirst("?", "1").replaceFirst("?", "'akquinet'")
 		val sqlInsert2 = SQL_INSERT.replaceFirst("?", "2").replaceFirst("?", "'IBM'")
-		val sqlDelete = "DELETE FROM COMPANY WHERE ID = 1"
 
 		driverMetrics.connection.use {
 			it.createStatement().executeUpdate(SQL_CREATE)
 			it.createStatement().executeUpdate(sqlInsert1)
 			it.createStatement().executeUpdate(sqlInsert2)
-			it.createStatement().executeUpdate(sqlDelete)
+			it.createStatement().executeUpdate(SQL_DELETE)
 			it.createStatement().executeUpdate(sqlInsert1)
 		}
 
 		assertThat(driverMetrics.registry().get(JDBC_STATEMENTS).counter().count())
 			.`as`("Numer of statement instances").isEqualTo(5.0)
 
-		assertThat(searchStatementCreations().tags(executionTags(sqlInsert1)).counter().count())
+		assertThat(statementCreations().tags(executionTags(sqlInsert1)).counter().count())
 			.`as`("Executions of '$sqlInsert1'").isEqualTo(2.0)
-		assertThat(searchStatementCreations().tags(executionTags(sqlInsert2)).counter().count())
+		assertThat(statementCreations().tags(executionTags(sqlInsert2)).counter().count())
 			.`as`("Executions of '$sqlInsert2'").isEqualTo(1.0)
-		assertThat(searchStatementCreations().tags(executionTags(sqlDelete)).counter().count())
-			.`as`("Executions of '$sqlDelete'").isEqualTo(1.0)
+		assertThat(statementCreations().tags(executionTags(SQL_DELETE)).counter().count())
+			.`as`("Executions of '$SQL_DELETE'").isEqualTo(1.0)
 
-		val timer = searchStatementExecutions().tags(timerTags(sqlInsert1)).timer()
+		val timer = statementExecutions().tags(timerTags(sqlInsert1)).timer()
 
 		assertThat(timer.count()).`as`("Number of records for '$sqlInsert1'").isEqualTo(2)
 		assertThat(timer.totalTime(TimeUnit.MICROSECONDS)).`as`("Total time spent for '$sqlInsert1'").isGreaterThan(0.0)
@@ -54,6 +53,6 @@ class StatementCounterTest : AbstractJDBCTest() {
 	private fun timerTags(sql: String) = Tags.of(TAG_STATEMENT_EXECUTION, sql)
 
 	@Suppress("SameParameterValue")
-	private fun searchStatementCreations() = driverMetrics.registry().get(JDBC_STATEMENTS_EXECUTE)
-	private fun searchStatementExecutions() = driverMetrics.registry().get(JDBC_STATEMENT_TIMER)
+	private fun statementCreations() = driverMetrics.registry().get(JDBC_STATEMENTS_EXECUTE)
+	private fun statementExecutions() = driverMetrics.registry().get(JDBC_STATEMENT_TIMER)
 }

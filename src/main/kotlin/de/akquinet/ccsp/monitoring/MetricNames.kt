@@ -8,6 +8,7 @@ const val JDBC_PREPARED_STATEMENTS = "Number of prepared statement instances"
 const val JDBC_PREPARED_STATEMENT_TIMER = "Time spent for prepared statement execution"
 const val TAG_PREPARED_STATEMENT_CREATION = "Number of created prepared statements"
 const val TAG_PREPARED_STATEMENT_EXECUTION = "Executions of prepared statement"
+const val TAG_PREPARED_STATEMENT_BATCHED_EXECUTION = "Batched executions of prepared statement"
 
 const val JDBC_STATEMENTS = "Number of statement instances"
 const val JDBC_STATEMENTS_EXECUTE = "Number of execution calls"
