@@ -14,7 +14,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
 
-        <version.micrometer>1.10.1</version.micrometer>
+        <version.micrometer>1.10.2</version.micrometer>
         <kotlin.version>1.7.22</kotlin.version>
         <junit.jupiter.version>5.9.0</junit.jupiter.version>
         <version.hibernate>5.3.25.Final</version.hibernate>
