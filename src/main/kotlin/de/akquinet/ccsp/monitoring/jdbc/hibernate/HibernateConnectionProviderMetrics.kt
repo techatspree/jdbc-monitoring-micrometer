@@ -15,7 +15,7 @@ import java.sql.SQLException
 abstract class HibernateConnectionProviderMetrics(private val connectionProvider: ConnectionProvider) :
 	AbstractJDBCMetrics(), Configurable, Stoppable, ServiceRegistryAwareService,
 	ConnectionProvider by connectionProvider {
-	protected val configurationValues: MutableMap<String, String> = HashMap()
+	protected val configurationValues: MutableMap<String, Any> = HashMap()
 
 	@kotlin.jvm.Throws(SQLException::class)
 	@Suppress("UsePropertyAccessSyntax")
@@ -30,7 +30,7 @@ abstract class HibernateConnectionProviderMetrics(private val connectionProvider
 		}
 
 		for (entry in configurationValues) {
-			this.configurationValues[entry.key as String] = entry.value as String
+			this.configurationValues[entry.key as String] = entry.value!!
 		}
 	}
 

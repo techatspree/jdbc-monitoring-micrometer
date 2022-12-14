@@ -16,9 +16,13 @@ abstract class AbstractJDBCMetrics : MeterBinder, JDBCMetrics {
 
 	@kotlin.jvm.Throws(SQLException::class)
 	fun handleConnection(connection: Connection): Connection {
-		onOpenConnection(connection)
+		return if (enabled) {
+			onOpenConnection(connection)
 
-		return JDBCConnection(this, connection)
+			JDBCConnection(this, connection)
+		} else {
+			connection
+		}
 	}
 
 	override fun bindTo(registry: MeterRegistry) {
