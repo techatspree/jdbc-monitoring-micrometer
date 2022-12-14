@@ -20,6 +20,20 @@
         <version.hibernate>5.3.25.Final</version.hibernate>
     </properties>
 
+    <distributionManagement>
+        <repository>
+            <id>l56itdev.bwb.de-releases</id>
+            <name>l56itdev.bwb.de-releases</name>
+            <url>https://l56itdev.bwb.de/artifactory/libs-release-local</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>l56itdev.bwb.de-snapshots</id>
+            <name>l56itdev.bwb.de-snapshots</name>
+            <url>https://l56itdev.bwb.de/artifactory/libs-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <dependencyManagement>
         <dependencies>
 			<dependency>
