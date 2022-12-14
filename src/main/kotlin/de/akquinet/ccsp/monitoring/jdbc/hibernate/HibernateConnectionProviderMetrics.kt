@@ -40,7 +40,7 @@ abstract class HibernateConnectionProviderMetrics(private val connectionProvider
 		}
 	}
 
-	override fun injectServices(serviceRegistry: ServiceRegistryImplementor?) {
+	override fun injectServices(serviceRegistry: ServiceRegistryImplementor) {
 		if (connectionProvider is ServiceRegistryAwareService) {
 			connectionProvider.injectServices(serviceRegistry)
 		}
