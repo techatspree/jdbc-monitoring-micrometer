@@ -16,9 +16,9 @@ abstract class AbstractJDBCMetrics : MeterBinder, JDBCMetrics {
 
 	@kotlin.jvm.Throws(SQLException::class)
 	fun handleConnection(connection: Connection): Connection {
-		return if (enabled) {
-			onOpenConnection(connection)
+		onOpenConnection(connection)
 
+		return if (enabled) {
 			JDBCConnection(this, connection)
 		} else {
 			connection
