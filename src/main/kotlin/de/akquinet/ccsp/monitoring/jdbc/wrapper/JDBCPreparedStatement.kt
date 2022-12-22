@@ -19,10 +19,10 @@ class JDBCPreparedStatement(
 	private val creationTags = Tags.of(TAG_PREPARED_STATEMENT_CREATION, sql)
 	private val timer = jdbcMetrics.registerTimer(JDBC_PREPARED_STATEMENT_TIMER, executionTags)
 	private val batchTimer = jdbcMetrics.registerTimer(JDBC_PREPARED_STATEMENT_TIMER, batchedTags)
-	private val instanceCounter = jdbcMetrics.registerCounter(JDBC_PREPARED_STATEMENTS, creationTags, UNIT_INSTANCES)
 
 	init {
-		instanceCounter.increment()
+		jdbcMetrics.registerFunctionCounter(JDBC_PREPARED_STATEMENTS, creationTags, UNIT_INSTANCES)
+		jdbcMetrics.functionCounterValue(JDBC_PREPARED_STATEMENTS, creationTags).increment()
 	}
 
 	override fun execute() = timer.record(BooleanSupplier { preparedStatement.execute() })

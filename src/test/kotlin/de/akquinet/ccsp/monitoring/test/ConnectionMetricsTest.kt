@@ -15,11 +15,11 @@ class ConnectionMetricsTest : AbstractJDBCTest() {
 
 	@Test
 	fun `Count connections`() {
-		checkMeters(0.0, 0.0, 0.0)
+		checkMeters(0, 0, 0)
 
 		dataSourceMetrics.connection.use {
 			it.createStatement().execute(SQL_CREATE)
-			checkMeters(1.0, 0.0, 1.0)
+			checkMeters(1, 0, 1)
 		}
 
 		dataSourceMetrics.connection.use {
@@ -27,18 +27,19 @@ class ConnectionMetricsTest : AbstractJDBCTest() {
 				setInt(1, 1)
 				setString(2, "akquinet")
 			}.executeUpdate()
-			checkMeters(2.0, 1.0, 1.0)
+			checkMeters(2, 1, 1)
 		}
 
-		val counters = dataSourceMetrics.registry().get(JDBC_PREPARED_STATEMENTS).counters()
+		val counters = dataSourceMetrics.registry().get(JDBC_PREPARED_STATEMENTS).functionCounters()
 		assertThat(counters.size).isEqualTo(1)
 
-		checkMeters(2.0, 2.0, 0.0)
+		checkMeters(2, 2, 0)
 	}
 
-	private fun checkMeters(opened: Double, closed: Double, active: Double) {
-		assertThat(dataSourceMetrics.counter(JDBC_CONNECTIONS_OPENED).count()).`as`(JDBC_CONNECTIONS_OPENED).isEqualTo(opened)
-		assertThat(dataSourceMetrics.counter(JDBC_CONNECTIONS_CLOSED).count()).`as`(JDBC_CONNECTIONS_CLOSED).isEqualTo(closed)
-		assertThat(dataSourceMetrics.gauge(JDBC_CONNECTIONS_ACTIVE).value()).`as`(JDBC_CONNECTIONS_ACTIVE).isEqualTo(active)
+	private fun checkMeters(opened: Int, closed: Int, active: Int) {
+		assertThat(dataSourceMetrics.functionCounterValue(JDBC_CONNECTIONS_OPENED).get()).`as`(JDBC_CONNECTIONS_OPENED).isEqualTo(opened)
+		assertThat(dataSourceMetrics.functionCounterValue(JDBC_CONNECTIONS_CLOSED).get()).`as`(JDBC_CONNECTIONS_CLOSED).isEqualTo(closed)
+		assertThat(dataSourceMetrics.gaugeCounterValue(JDBC_CONNECTIONS_ACTIVE).get()).`as`(JDBC_CONNECTIONS_ACTIVE).isEqualTo(active)
+		assertThat(dataSourceMetrics.gauge(JDBC_CONNECTIONS_ACTIVE).value()).`as`(JDBC_CONNECTIONS_ACTIVE).isEqualTo(active.toDouble())
 	}
 }

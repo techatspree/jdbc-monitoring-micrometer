@@ -8,13 +8,13 @@ class JDBCConnection(
 	private val connection: Connection
 ) : Connection by connection {
 	init {
-		jdbcMetrics.counter(JDBC_CONNECTIONS_OPENED).increment()
-		jdbcMetrics.gaugeCounter(JDBC_CONNECTIONS_ACTIVE).increment()
+		jdbcMetrics.functionCounterValue(JDBC_CONNECTIONS_OPENED).increment()
+		jdbcMetrics.gaugeCounterValue(JDBC_CONNECTIONS_ACTIVE).increment()
 	}
 
 	override fun close() {
-		jdbcMetrics.counter(JDBC_CONNECTIONS_CLOSED).increment()
-		jdbcMetrics.gaugeCounter(JDBC_CONNECTIONS_ACTIVE).decrement()
+		jdbcMetrics.functionCounterValue(JDBC_CONNECTIONS_CLOSED).increment()
+		jdbcMetrics.gaugeCounterValue(JDBC_CONNECTIONS_ACTIVE).decrement()
 
 		connection.close()
 	}

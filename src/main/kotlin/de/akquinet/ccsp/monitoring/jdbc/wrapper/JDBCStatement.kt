@@ -14,11 +14,11 @@ class JDBCStatement(
 	private val jdbcMetrics: JDBCMetrics,
 	private val statement: Statement
 ) : Statement by statement {
-	private val instanceCounter = jdbcMetrics.registerCounter(JDBC_STATEMENTS, Tags.empty(), UNIT_INSTANCES)
 	private val batches = ArrayList<String>()
 
 	init {
-		instanceCounter.increment()
+		jdbcMetrics.registerFunctionCounter(JDBC_STATEMENTS, Tags.empty(), UNIT_INSTANCES)
+		jdbcMetrics.functionCounterValue(JDBC_STATEMENTS).increment()
 	}
 
 	override fun execute(sql: String) = countimer(sql).record(BooleanSupplier { statement.execute(sql) })
@@ -69,7 +69,9 @@ class JDBCStatement(
 		countimer(sql).record(LongSupplier { statement.executeLargeUpdate(sql, columnNames) })
 
 	private fun countimer(sql: String): Timer {
-		jdbcMetrics.registerCounter(JDBC_STATEMENTS_EXECUTE, Tags.of(TAG_STATEMENT_CREATION, sql), "calls").increment()
+		val tags = Tags.of(TAG_STATEMENT_CREATION, sql)
+		jdbcMetrics.registerFunctionCounter(JDBC_STATEMENTS_EXECUTE, tags, "calls")
+		jdbcMetrics.functionCounterValue(JDBC_STATEMENTS_EXECUTE, tags).increment()
 
 		return jdbcMetrics.registerTimer(JDBC_STATEMENT_TIMER, Tags.of(TAG_STATEMENT_EXECUTION, sql))
 	}

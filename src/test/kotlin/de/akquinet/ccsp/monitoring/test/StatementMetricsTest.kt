@@ -33,14 +33,19 @@ class StatementMetricsTest : AbstractJDBCTest() {
 			it.createStatement().executeUpdate(sqlInsert1)
 		}
 
-		assertThat(driverMetrics.registry().get(JDBC_STATEMENTS).counter().count())
+		assertThat(driverMetrics.registry().get(JDBC_STATEMENTS).functionCounter().count())
 			.`as`("Numer of statement instances").isEqualTo(5.0)
+		assertThat(driverMetrics.functionCounterValue(JDBC_STATEMENTS).get())
+			.`as`("Numer of statement instances").isEqualTo(5)
 
-		assertThat(statementCreations().tags(executionTags(sqlInsert1)).counter().count())
+		assertThat(statementCreations().tags(executionTags(sqlInsert1)).functionCounter().count())
 			.`as`("Executions of '$sqlInsert1'").isEqualTo(2.0)
-		assertThat(statementCreations().tags(executionTags(sqlInsert2)).counter().count())
+		assertThat(driverMetrics.functionCounterValue(JDBC_STATEMENTS_EXECUTE, executionTags(sqlInsert1)).get())
+			.`as`("Executions of '$sqlInsert1'").isEqualTo(2)
+
+		assertThat(statementCreations().tags(executionTags(sqlInsert2)).functionCounter().count())
 			.`as`("Executions of '$sqlInsert2'").isEqualTo(1.0)
-		assertThat(statementCreations().tags(executionTags(SQL_DELETE)).counter().count())
+		assertThat(statementCreations().tags(executionTags(SQL_DELETE)).functionCounter().count())
 			.`as`("Executions of '$SQL_DELETE'").isEqualTo(1.0)
 
 		val timer = statementExecutions().tags(timerTags(sqlInsert1)).timer()

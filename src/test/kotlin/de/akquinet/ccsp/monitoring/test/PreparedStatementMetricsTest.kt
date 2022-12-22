@@ -27,10 +27,10 @@ class PreparedStatementMetricsTest : AbstractJDBCTest() {
 			it.prepareStatement(SQL_INSERT).apply { setInt(1, 2); setString(2, "IBM") }.executeUpdate()
 		}
 
-		assertThat(statementCreations().counters().size).isEqualTo(2)
-		assertThat(statementCreations().tags(callTags(SQL_CREATE)).counter().count())
+		assertThat(statementCreations().functionCounters().size).isEqualTo(2)
+		assertThat(statementCreations().tags(callTags(SQL_CREATE)).functionCounter().count())
 			.`as`("Prepared statements for '$SQL_CREATE'").isEqualTo(1.0)
-		assertThat(statementCreations().tags(callTags(SQL_INSERT)).counter().count())
+		assertThat(statementCreations().tags(callTags(SQL_INSERT)).functionCounter().count())
 			.`as`("Prepared statements for '$SQL_INSERT'").isEqualTo(2.0)
 
 		val timer = statementExecutions().tags(executionTags(SQL_INSERT)).timer()
@@ -49,10 +49,10 @@ class PreparedStatementMetricsTest : AbstractJDBCTest() {
 			insertStatement.executeBatch()
 		}
 
-		assertThat(statementCreations().counters().size).isEqualTo(2)
-		assertThat(statementCreations().tags(callTags(SQL_CREATE)).counter().count())
+		assertThat(statementCreations().functionCounters().size).isEqualTo(2)
+		assertThat(statementCreations().tags(callTags(SQL_CREATE)).functionCounter().count())
 			.`as`("Prepared statements for '$SQL_CREATE'").isEqualTo(1.0)
-		assertThat(statementCreations().tags(callTags(SQL_INSERT)).counter().count())
+		assertThat(statementCreations().tags(callTags(SQL_INSERT)).functionCounter().count())
 			.`as`("Prepared statements for '$SQL_INSERT'").isEqualTo(1.0)
 
 		val timer = statementExecutions().tags(executionTags(SQL_INSERT)).timer()
