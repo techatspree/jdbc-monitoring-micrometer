@@ -7,7 +7,6 @@ import io.micrometer.core.instrument.binder.MeterBinder
 import java.sql.Connection
 import java.sql.SQLException
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.stream.Collectors
 
 abstract class AbstractJDBCMetrics : MeterBinder, JDBCMetrics {
 	private val gaugeCounters = HashMap<String, AtomicInteger>()
@@ -93,19 +92,4 @@ abstract class AbstractJDBCMetrics : MeterBinder, JDBCMetrics {
 	@kotlin.jvm.Throws(SQLException::class)
 	protected open fun onOpenConnection(realConnection: Connection) {
 	}
-}
-
-fun AtomicInteger.increment() {
-	incrementAndGet()
-}
-
-fun AtomicInteger.decrement() {
-	decrementAndGet()
-}
-
-fun Meter.getUniqueName(): String {
-	val tags = id.tags.stream().map { tag: Tag -> tag.key + "." + tag.value }
-		.collect(Collectors.joining(":"))
-
-	return tags + "/" + id.name
 }
