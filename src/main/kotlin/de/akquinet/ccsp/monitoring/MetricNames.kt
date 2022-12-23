@@ -3,9 +3,7 @@
 package de.akquinet.ccsp.monitoring
 
 import io.micrometer.core.instrument.Meter
-import io.micrometer.core.instrument.Tag
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.stream.Collectors
 
 const val JDBC_CONNECTIONS_OPENED = "Number of opened connections"
 const val JDBC_CONNECTIONS_CLOSED = "Number of closed connections"
@@ -34,8 +32,7 @@ fun AtomicInteger.decrement() {
 }
 
 fun Meter.getUniqueName(): String {
-	val tags = id.tags.stream().map { tag: Tag -> tag.key + "." + tag.value }
-		.collect(Collectors.joining(":"))
+	val tags = id.tags.joinToString(separator = ":") { it.key + "." + it.value }
 
-	return tags + "/" + id.name
+	return if (tags.isNotEmpty()) id.name + "/" + tags else id.name
 }

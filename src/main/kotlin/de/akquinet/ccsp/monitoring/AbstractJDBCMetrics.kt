@@ -49,7 +49,7 @@ abstract class AbstractJDBCMetrics : MeterBinder, JDBCMetrics {
 	@Suppress("MoveLambdaOutsideParentheses", "SameParameterValue")
 	override fun registerFunctionCounter(name: String, tags: Tags, baseUnit: String): FunctionCounter {
 		val value = AtomicInteger(0)
-		val counter = FunctionCounter.builder(name, value, { value.toDouble() })
+		val counter = FunctionCounter.builder(name, value, { it.toDouble() })
 			.tags(tags).baseUnit(baseUnit).description(name).register(meterRegistry)
 		val key = counter.getUniqueName()
 
