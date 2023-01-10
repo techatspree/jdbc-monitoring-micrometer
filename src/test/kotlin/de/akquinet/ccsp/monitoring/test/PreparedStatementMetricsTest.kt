@@ -37,16 +37,16 @@ class PreparedStatementMetricsTest : AbstractJDBCTest() {
 			val createStatement = it.prepareStatement(SQL_CREATE)
 
 			// That's the canonical code
-			if(createStatement.isWrapperFor(JDBCWrapper::class.java)) (createStatement as JDBCWrapper).name = "CREATE"
+			if(createStatement.isWrapperFor(JDBCWrapper::class.java)) createStatement.unwrap(JDBCWrapper::class.java).name = "CREATE"
 			createStatement.execute()
 
 			// Since we know what we're doing, we can omit the check
 			val statement1 = it.prepareStatement(SQL_INSERT)
-			(statement1 as JDBCWrapper).name = "INSERT"
+			statement1.unwrap(JDBCWrapper::class.java).name = "INSERT"
 			statement1.apply { setInt(1, 1); setString(2, "akquinet") }.executeUpdate()
 
 			val statement2 = it.prepareStatement(SQL_INSERT)
-			(statement2 as JDBCWrapper).name = "INSERT"
+			statement2.unwrap(JDBCWrapper::class.java).name = "INSERT"
 			statement2.apply { setInt(1, 2); setString(2, "IBM") }.executeUpdate()
 		}
 
