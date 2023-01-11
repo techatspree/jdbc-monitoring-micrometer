@@ -1,4 +1,4 @@
-@file:JvmName("Metrics")
+@file:JvmName("MetricNames")
 
 package de.akquinet.ccsp.monitoring
 
